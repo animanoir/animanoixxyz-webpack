@@ -107,6 +107,19 @@ footer {
   width: 100vw
 }
 
+#aboutText {
+  position: absolute;
+  color: white;
+  background:rgba(0, 0, 0, 0.8);
+  padding: 1rem;
+  font-size: 1.1rem;
+  opacity: 0;
+  top: 50vh;
+  left: -50vw;
+  width: 30%;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
 #linkName {
   font-family: 'Josefin Sans', sans-serif;
   font-size: 1rem;
@@ -123,6 +136,7 @@ footer {
 .linkImg {
   bottom: -100px;
   visibility: hidden;
+  align-self: center;
 }
 
 .margin-right{
@@ -131,7 +145,7 @@ footer {
 
 .navbar {
   font-size: 1.5rem;
-  display: flex;
+  display: flex!important;
 }
 
 .navbar p{

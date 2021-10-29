@@ -4,7 +4,7 @@ import './style.css'
 import Swup from 'swup'
 import SwupSlideTheme from '@swup/slide-theme';
 import gsap, {
-  TWEEN
+  CSSPlugin
 } from 'gsap';
 
 import * as THREE from 'three';
@@ -450,15 +450,23 @@ linkFour.addEventListener('mouseover', () => {
 })
 
 const aboutLink = document.getElementById('about')
+const aboutText = document.getElementById('aboutText')
 
 var aboutClicked = false
 
+gsap.registerPlugin(CSSPlugin)
+
 about.addEventListener('click', () => {
   aboutClicked = !aboutClicked
-  console.log('about was clicked.')
   gsap.to(camera.position, {
-    duration: 1,
+    duration: 0.8,
     z: aboutClicked ? 11 : 6,
-    ease: 'back·out(1.7)'
+    ease: 'sine.out'
+  })
+  gsap.to(aboutText, {
+    duration: 0.4,
+    left: aboutClicked ? '5vw' : '-50vw',
+    ease: 'sine.out',
+    opacity: aboutClicked ? 1 : 0
   })
 })
