@@ -1,0 +1,317 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&family=Roboto+Condensed:wght@300&display=swap');
+
+* {
+  color: white;
+}
+
+canvas {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: black;
+  overflow:hidden;
+}
+
+h2{
+  margin:0;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  color: red;
+}
+
+#fixed-frame {
+  position: fixed;
+  width: 100vw;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.loading-bar {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: 2px;
+  background: #ffffff;
+  transform: scaleX(0.3);
+  transition: transform 0.5s;
+}
+
+.loading-bar.ended {
+  transform: scaleX(0);
+  transform-origin: 100% 0;
+  transition: transform 1.5s ease-in-out;
+}
+
+#three {
+  position: relative;
+  top: 0;
+  left: 0;
+  outline: none;
+  overflow: hidden;
+}
+
+.hero {
+  display: block;
+  overflow: hidden;
+}
+
+.list-container{
+  display: flex;
+  font-size: 4.4rem;
+  justify-content: center;
+}
+
+.hero-other{
+  display: block;
+}
+
+.experiment{
+  font-size: 5rem;
+  position: absolute;
+}
+
+#title {
+  margin: 0;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+#nowPlaying {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 1.1rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.31);
+}
+
+#musicData {
+  font-family: serif;
+  color: white;
+}
+
+/* Footer */
+
+footer {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 1rem;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  width: 100vw
+}
+
+#linkName {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 1rem;
+  margin-right: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+#links {
+  width: 15vw;
+  display: flex;
+  justify-content: space-between;
+}
+
+.linkImg {
+  bottom: -100px;
+  visibility: hidden;
+}
+
+.margin-right{
+  margin-right: 1rem;
+}
+
+.navbar {
+  font-size: 1.5rem;
+  display: flex;
+}
+
+.navbar p{
+  cursor: pointer;
+}
+
+.navbar p:hover {
+  color: red;
+}
+
+.font-roboto {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+.font-josefin{
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+/* ----------------------------- Visual effects ----------------------------- */
+
+.fade-in {
+  animation: fadeIn ease 1.5s;
+  -webkit-animation: fadeIn ease 1.5s;
+  -moz-animation: fadeIn ease 1.5s;
+  -o-animation: fadeIn ease 1.5s;
+  -ms-animation: fadeIn ease 1.5s;
+}
+
+.fade-in-quick {
+  animation: fadeIn ease-in 2s;
+  -webkit-animation: fadeIn ease-in 2s;
+  -moz-animation: fadeIn ease-in 2s;
+  -o-animation: fadeIn ease-in 2s;
+  -ms-animation: fadeIn ease-in 2s;
+}
+
+.fade-in-slow {
+  animation: fadeIn ease 3s;
+  -webkit-animation: fadeIn ease 3s;
+  -moz-animation: fadeIn ease 3s;
+  -o-animation: fadeIn ease 3s;
+  -ms-animation: fadeIn ease 3s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@-o-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@-ms-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+
+
+#backgroundNoise {
+  top: -10rem;
+  left: -10rem;
+  width: calc(100% + 20rem);
+  height: calc(100% + 20rem);
+  z-index: 1000;
+  position: fixed;
+  pointer-events: none;
+  background-position: 50%;
+  background-image: url('../static/images/noise-1.png');
+  pointer-events: none;
+  animation: backgroundNoise 1s steps(2) infinite;
+}
+
+@keyframes backgroundNoise {
+  0% {
+    transform: translate3d(0, 9rem, 0);
+  }
+
+  10% {
+    transform: translate3d(-1rem, -4rem, 0);
+  }
+
+  20% {
+    transform: translate3d(-8rem, 2rem, 0);
+  }
+
+  30% {
+    transform: translate3d(9rem, -9rem, 0);
+  }
+
+  40% {
+    transform: translate3d(-2rem, 7rem, 0);
+  }
+
+  50% {
+    transform: translate3d(-9rem, -4rem, 0);
+  }
+
+  60% {
+    transform: translate3d(2rem, 6rem, 0);
+  }
+
+  70% {
+    transform: translate3d(7rem, -8rem, 0);
+  }
+
+  80% {
+    transform: translate3d(-9rem, 1rem, 0);
+  }
+
+  90% {
+    transform: translate3d(6rem, -5rem, 0);
+  }
+
+  to {
+    transform: translate3d(-7rem, 0, 0);
+  }
+}
+
+/* ---------------------------- swup transitions ---------------------------- */
+.transition-fade {
+  transition: 0.4s;
+  opacity: 1;
+}
+
+html.is-animating .transition-fade {
+  opacity: 0;
+}
+/* ----------------------------- Responsiveness ----------------------------- */
+@media (max-width: 960px) {
+  footer {
+    flex-direction: column;
+    align-items: initial;
+  }
+  .navbar {
+    position: absolute;
+    bottom: 60px;
+    padding-left: 2.5rem;
+  }
+  #links {
+    width: 100%;
+    justify-content: space-around;
+  }
+  #linkName {
+    display: none;
+  }
+}
