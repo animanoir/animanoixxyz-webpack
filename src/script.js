@@ -58,7 +58,7 @@ const secondWordArray = [
   'Artist',
   'Lover',
   'Crafter',
-  'Philosopher'
+  'Philosophy'
 
 ]
 
@@ -109,7 +109,6 @@ const loadingManager = new THREE.LoadingManager(
         duration: 3,
         value: 0
       })
-
       loadingBarElement.classList.add('ended')
       loadingBarElement.style.transform = ''
     }, 500)
@@ -259,22 +258,29 @@ const textures = [texture, texture2, texture3]
 //ANCHOR Video cubes
 const videoCubesGroup = new THREE.Group()
 const cubesQuantity = 200
-const geometry = new THREE.BoxGeometry(7, 7, 7);
+const geometry = new THREE.BoxGeometry(6, 6, 6, 4,4,4);
 for (let i = 0; i < cubesQuantity; i++) {
+  let zPosition = (-1 * (Math.random() - 0.5) * 100) - 10
+  let wireframeEnabled = false
+  if(zPosition >= -5 ){
+    wireframeEnabled = true
+  }
   let randomIndex = Math.floor(Math.random() * textures.length)
   const material = new THREE.MeshPhongMaterial({
     color: 'white',
-    map: textures[randomIndex]
+    map: textures[randomIndex],
+    wireframe: wireframeEnabled
   });
   var cube = new THREE.Mesh(geometry, material);
   cube.position.x = ((Math.random() - 0.5) * 111) + 10
   cube.position.y = ((Math.random() - 0.5) * 111) + 10
-  cube.position.z = (-1 * (Math.random() - 0.5) * 100) - 10
+  cube.position.z = zPosition
   cube.rotation.x = Math.random() * Math.PI
   cube.rotation.y = Math.random() * Math.PI
   // const scale = Math.random() * 1.5
   // cube.scale.set(scale, scale, scale)
   // scene.add(cube);
+
   videoCubesGroup.add(cube)
 }
 
@@ -311,8 +317,8 @@ scene.add(pointLight)
 
 // ANCHOR Render function
 function render() {
-  // renderer.render(scene, camera);
-  effectComposer.render();
+  renderer.render(scene, camera);
+  // effectComposer.render();
 }
 
 //ANCHOR Animation function
@@ -435,7 +441,7 @@ linkTwo.addEventListener('mouseover', () => {
 })
 const linkThree = document.querySelector('.link-6')
 linkThree.addEventListener('mouseover', () => {
-  linkName.textContent = 'Virtual personal space (en español)'
+  linkName.textContent = 'Blog (en español)'
 
 })
 const linkFour = document.querySelector('.link-7')
@@ -445,7 +451,14 @@ linkFour.addEventListener('mouseover', () => {
 
 const aboutLink = document.getElementById('about')
 
+var aboutClicked = false
+
 about.addEventListener('click', () => {
+  aboutClicked = !aboutClicked
   console.log('about was clicked.')
-  camera.position.z = 11
+  gsap.to(camera.position, {
+    duration: 1,
+    z: aboutClicked ? 11 : 6,
+    ease: 'back·out(1.7)'
+  })
 })

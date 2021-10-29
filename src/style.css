@@ -136,6 +136,7 @@ footer {
 
 .navbar p{
   cursor: pointer;
+  margin-block: 0;
 }
 
 .navbar p:hover {
