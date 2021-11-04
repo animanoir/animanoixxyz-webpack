@@ -8,6 +8,26 @@ canvas {
   padding: 0;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f136;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(189, 189, 189);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 body {
   background-color: black;
   overflow:hidden;
@@ -113,11 +133,15 @@ footer {
   padding: 1rem;
   font-size: 1.1rem;
   opacity: 0;
-  top: 50vh;
+  height: 200px;
+  overflow:auto;
+  top: 40vh;
   left: -50vw;
-  width: 30%;
+  width: 25%;
   font-family: 'Roboto Condensed', sans-serif;
 }
+
+#aboutText
 
 #linkName {
   font-family: 'Josefin Sans', sans-serif;

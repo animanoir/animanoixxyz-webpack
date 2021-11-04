@@ -139,10 +139,21 @@ const matcapTexture = new THREE.TextureLoader().load('/matcaps/161B1F_C7E0EC_90A
 let mainText
 
 //ANCHOR Model
-const modelLoader = new GLTFLoader(loadingManager);
+const headLoader = new GLTFLoader(loadingManager);
 var head
+const logoModel = new GLTFLoader(loadingManager)
+var logo
 
-modelLoader.load('/model/myHead.glb', function (gltf) {
+logoModel.load('/model/animanoirLogo-completo1.glb', function (gltf) {
+  logo = gltf.scene
+  logo.position.set(2, 0, -15)
+  scene.add(logo)
+}, undefined, function (error) {
+
+  console.error(error);
+
+});
+headLoader.load('/model/myHead.glb', function (gltf) {
   head = gltf.scene
   head.position.set(0, 0, 8)
   scene.add(head)
@@ -152,8 +163,6 @@ modelLoader.load('/model/myHead.glb', function (gltf) {
   console.error(error);
 
 });
-
-
 
 fontLoader.load(
   '/fonts/notosansregular.json',
@@ -258,11 +267,11 @@ const textures = [texture, texture2, texture3]
 //ANCHOR Video cubes
 const videoCubesGroup = new THREE.Group()
 const cubesQuantity = 200
-const geometry = new THREE.BoxGeometry(6, 6, 6, 4,4,4);
+const geometry = new THREE.BoxGeometry(6, 6, 6, 4, 4, 4);
 for (let i = 0; i < cubesQuantity; i++) {
   let zPosition = (-1 * (Math.random() - 0.5) * 100) - 10
   let wireframeEnabled = false
-  if(zPosition >= -5 ){
+  if (zPosition >= -5) {
     wireframeEnabled = true
   }
   let randomIndex = Math.floor(Math.random() * textures.length)
@@ -286,6 +295,46 @@ for (let i = 0; i < cubesQuantity; i++) {
 
 scene.add(videoCubesGroup)
 
+// Circle behind Animanoir logo
+const fragmentShader = `
+  #include <common>
+
+  uniform vec3 iResolution;
+  uniform float iTime;
+
+  // By iq: https://www.shadertoy.com/user/iq
+  // license: Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+  void mainImage( out vec4 fragColor, in vec2 fragCoord )
+  {
+      // Normalized pixel coordinates (from 0 to 1)
+      vec2 uv = fragCoord/iResolution.xy;
+
+      // Time varying pixel color
+      vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,4,4));
+
+      // Output to screen
+      fragColor = vec4(col,1.0);
+  }
+
+  void main() {
+    mainImage(gl_FragColor, gl_FragCoord.xy);
+  }
+  `;
+  const uniforms = {
+    iTime: { value: 0 },
+    iResolution:  { value: new THREE.Vector3() },
+  };
+  const circleMaterial = new THREE.ShaderMaterial({
+    fragmentShader,
+    uniforms,
+  });
+
+const circleGeometry = new THREE.CircleGeometry( 3, 32 );
+const circle = new THREE.Mesh( circleGeometry, circleMaterial );
+circle.position.set(2,0,-15.5)
+scene.add( circle )
+
+
 // Lighting
 // let directionalLight = new THREE.AmbientLight('white', 0.5)
 // directionalLight.castShadow = true
@@ -296,6 +345,9 @@ pointLight.position.x = 2
 pointLight.position.y = 3
 pointLight.position.z = 4
 scene.add(pointLight)
+
+
+
 
 // Glowing spheres
 // const sphereOneGeometry = new THREE.SphereGeometry(1, 32, 32)
@@ -325,8 +377,10 @@ function render() {
 const animate = function () {
   requestAnimationFrame(animate);
   const elapsedTime = clock.getElapsedTime()
-  // head.rotation.x += elapsedTime * -0.01
   videoCubesGroup.rotation.y = elapsedTime * -0.01
+
+  uniforms.iResolution.value.set(canvas.width, canvas.height, 1);
+  uniforms.iTime.value = elapsedTime;
 
   // controls.update();
 
@@ -449,6 +503,9 @@ linkFour.addEventListener('mouseover', () => {
   linkName.textContent = 'More links...'
 })
 
+let isFar = false
+
+// about animation
 const aboutLink = document.getElementById('about')
 const aboutText = document.getElementById('aboutText')
 
@@ -458,6 +515,27 @@ gsap.registerPlugin(CSSPlugin)
 
 about.addEventListener('click', () => {
   aboutClicked = !aboutClicked
+
+  if(isFar){
+    gsap.to(projectsText, {
+      duration: 0.5,
+      left: '-50vw',
+      ease: 'sine.inOut',
+      opacity:  0
+    })
+    gsap.to(camera.position, {
+      duration: 0.8,
+      z: aboutClicked ? 22 : 6,
+      ease: 'sine.inOut'
+    })
+    gsap.to(aboutText, {
+      duration: 0.5,
+      left: aboutClicked ? '5vw' : '-50vw',
+      ease: 'sine.inOut',
+      opacity: aboutClicked ? 1 : 0
+    })
+
+  }
   gsap.to(camera.position, {
     duration: 0.8,
     z: aboutClicked ? 11 : 6,
@@ -469,4 +547,53 @@ about.addEventListener('click', () => {
     ease: 'sine.inOut',
     opacity: aboutClicked ? 1 : 0
   })
+  if(aboutClicked){
+  isFar = true
+  }
+
+})
+
+// projects animation
+const projectsLink = document.getElementById('projects')
+const projectsText = document.getElementById('projectsText')
+
+var projectsClicked = false
+
+gsap.registerPlugin(CSSPlugin)
+
+projectsLink.addEventListener('click', () => {
+  projectsClicked = !projectsClicked
+  if(isFar){
+    gsap.to(aboutText, {
+      duration: 0.5,
+      left: '-50vw',
+      ease: 'sine.inOut',
+      opacity: 0
+    })
+    gsap.to(camera.position, {
+      duration: 0.8,
+      z:  -11,
+      ease: 'sine.inOut'
+    })
+    gsap.to(projectsText, {
+      duration: 0.5,
+      left: '5vw',
+      ease: 'sine.inOut',
+      opacity: 1
+    })
+    isFar = false
+
+
+  }else {
+  gsap.to(camera.position, {
+    duration: 0.8,
+    z: projectsClicked ? -11 : 6,
+    ease: 'sine.inOut'
+  })
+  gsap.to(projectsText, {
+    duration: 0.5,
+    left: projectsClicked ? '5vw' : '-50vw',
+    ease: 'sine.inOut',
+    opacity: projectsClicked ? 1 : 0
+  })}
 })
