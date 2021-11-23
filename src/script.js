@@ -46,7 +46,8 @@ const firstWordArray = [
   'Magic',
   'Analog',
   'Software',
-  'Meta'
+  'Meta',
+  'Ethereal'
 ]
 
 const firstWord = firstWordArray[Math.floor(Math.random() * firstWordArray.length)]
@@ -58,7 +59,8 @@ const secondWordArray = [
   'Artist',
   'Lover',
   'Crafter',
-  'Philosophy'
+  'Philosophy',
+  'Qualia'
 
 ]
 
