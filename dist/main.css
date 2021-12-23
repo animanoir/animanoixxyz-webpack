@@ -152,7 +152,7 @@ footer {
   overflow:auto;
   top: 25vh;
   width: 35vw;
-  left: 50%;
+  left: -50vw;
   font-family: 'Roboto Condensed', sans-serif;
 }
 
@@ -168,12 +168,11 @@ footer {
 #linkName {
   font-family: 'Josefin Sans', sans-serif;
   font-size: 1rem;
-  margin-right: 1.3rem;
-  margin-bottom: 1rem;
 }
 
 #links {
   width: 15vw;
+  padding-top: 0.5rem;
   display: flex;
   justify-content: space-between;
 }
