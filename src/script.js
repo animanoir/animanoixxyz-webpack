@@ -9,6 +9,8 @@ import gsap, {
 
 import * as THREE from 'three';
 
+import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
+
 import {
   FontLoader
 } from 'three/examples/jsm/loaders/FontLoader.js'
@@ -36,6 +38,7 @@ const swup = new Swup({
 });
 
 /* -------------------------------- three.js -------------------------------- */
+
 THREE.Cache.enabled = true;
 
 const firstWordArray = [
@@ -96,6 +99,7 @@ renderer.setPixelRatio(window.devicePixelRatio, 2);
 renderer.setSize(windowSize.width, windowSize.height)
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true
+renderer.xr.enabled = true;
 
 //ANCHOR Camera
 const camera = new THREE.PerspectiveCamera(75, windowSize.width / windowSize.height, 0.1, 1000);
@@ -375,9 +379,7 @@ function render() {
   // effectComposer.render();
 }
 
-//ANCHOR Animation function
-const animate = function () {
-  requestAnimationFrame(animate);
+renderer.setAnimationLoop( () => {
   const elapsedTime = clock.getElapsedTime()
   videoCubesGroup.rotation.y = elapsedTime * -0.01
 
@@ -394,10 +396,32 @@ const animate = function () {
 
   // head.rotation.set(elapsedTime * -0.01,0,5)
 
-  render()
-};
+  renderer.render(scene,camera)
+})
 
-animate();
+//ANCHOR Animation function
+// const animate = function () {
+//   requestAnimationFrame(animate);
+//   const elapsedTime = clock.getElapsedTime()
+//   videoCubesGroup.rotation.y = elapsedTime * -0.01
+
+//   uniforms.iResolution.value.set(canvas.width, canvas.height, 1);
+//   uniforms.iTime.value = elapsedTime;
+
+//   // controls.update();
+
+//   // Smooth camera angle movement
+//   camera.position.x = mouse.x
+//   // camera.position.z = (Math.cos(mouse.x * Math.PI) * 10)
+//   camera.position.y = mouse.y
+//   // camera.lookAt(mainText.position)
+
+//   // head.rotation.set(elapsedTime * -0.01,0,5)
+
+//   render()
+// };
+
+// animate();
 
 /* --------------------------------- Raw JS --------------------------------- */
 
@@ -457,6 +481,8 @@ const lastfmData = fetch('https://ws.audioscrobbler.com/2.0/?method=user.getRece
     document.getElementById("track").textContent = formattedTrackname
     document.getElementById("artist").textContent = formattedArtistname
   });
+
+document.body.appendChild( VRButton.createButton( renderer ) );
 
 /* ---------------------------------- gsap ---------------------------------- */
 
