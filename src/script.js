@@ -9,7 +9,9 @@ import gsap, {
 
 import * as THREE from 'three';
 
-import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
+import {
+  VRButton
+} from 'three/examples/jsm/webxr/VRButton.js';
 
 import {
   FontLoader
@@ -50,7 +52,8 @@ const firstWordArray = [
   'Analog',
   'Software',
   'Meta',
-  'Ethereal'
+  'Ethereal',
+  'Anarchic'
 ]
 
 const firstWord = firstWordArray[Math.floor(Math.random() * firstWordArray.length)]
@@ -63,8 +66,8 @@ const secondWordArray = [
   'Lover',
   'Crafter',
   'Philosophy',
-  'Qualia'
-
+  'Qualia',
+  'Soul'
 ]
 
 const secondWord = secondWordArray[Math.floor(Math.random() * secondWordArray.length)]
@@ -74,7 +77,7 @@ const clock = new THREE.Clock()
 const loadingBarElement = document.querySelector('.loading-bar')
 
 //ANCHOR Raycaster + mouse hover detection
-const raycaster = new THREE.Raycaster()
+// const raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
 
 // Canvas
@@ -104,6 +107,8 @@ renderer.xr.enabled = true;
 //ANCHOR Camera
 const camera = new THREE.PerspectiveCamera(75, windowSize.width / windowSize.height, 0.1, 1000);
 camera.position.z = 6;
+const d = new Date();
+
 
 //ANCHOR Loading Manager
 const loadingManager = new THREE.LoadingManager(
@@ -135,7 +140,7 @@ effectComposer.setSize(windowSize.width, windowSize.height)
 const renderPass = new RenderPass(scene, camera)
 effectComposer.addPass(renderPass)
 
-const glitchPass = new GlitchPass()
+const glitchPass = new GlitchPass();
 effectComposer.addPass(glitchPass)
 
 //ANCHOR Fonts
@@ -270,10 +275,49 @@ const texture3 = new THREE.VideoTexture(videoTex3);
 
 const textures = [texture, texture2, texture3]
 
+//ANCHOR Skybox (thanks to this tutorial https://codinhood.com/post/create-skybox-with-threejs)
+const materialArray = createMaterialArray('corona');
+const skyboxGeo = new THREE.BoxGeometry(500, 500, 500);
+const skybox = new THREE.Mesh(skyboxGeo, materialArray);
+
+
+// const ft = new THREE.TextureLoader().load("./images/skybox/corona_ft.png");
+// const bk = new THREE.TextureLoader().load("./images/skybox/corona_bk.png");
+// const up = new THREE.TextureLoader().load("./images/skybox/corona_up.png");
+// const dn = new THREE.TextureLoader().load("./images/skybox/corona_dn.png");
+// const rt = new THREE.TextureLoader().load("./images/skybox/corona_rt.jpg");
+// const lf = new THREE.TextureLoader().load("./images/skybox/corona_lf.jpg");
+
+function createPathStrings(filename) {
+  const basePath = "./images/skybox/";
+  const baseFilename = basePath + filename;
+  const fileType = ".png";
+  const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
+  const pathStings = sides.map(side => {
+    return baseFilename + "_" + side + fileType;
+  });
+  return pathStings;
+}
+
+function createMaterialArray(filename) {
+  const skyboxImagepaths = createPathStrings(filename);
+  const materialArray = skyboxImagepaths.map(image => {
+    let texture = new THREE.TextureLoader().load(image);
+
+    return new THREE.MeshBasicMaterial({
+      map: texture,
+      side: THREE.BackSide
+    });
+  });
+  return materialArray;
+}
+
+scene.add(skybox);
+
 //ANCHOR Video cubes
 const videoCubesGroup = new THREE.Group()
-const cubesQuantity = 200
-const geometry = new THREE.BoxGeometry(6, 6, 6, 4, 4, 4);
+const cubesQuantity = 500
+const geometry = new THREE.CircleGeometry(5,6);
 for (let i = 0; i < cubesQuantity; i++) {
   let zPosition = (-1 * (Math.random() - 0.5) * 100) - 10
   let wireframeEnabled = false
@@ -326,19 +370,23 @@ const fragmentShader = `
     mainImage(gl_FragColor, gl_FragCoord.xy);
   }
   `;
-  const uniforms = {
-    iTime: { value: 0 },
-    iResolution:  { value: new THREE.Vector3() },
-  };
-  const circleMaterial = new THREE.ShaderMaterial({
-    fragmentShader,
-    uniforms,
-  });
+const uniforms = {
+  iTime: {
+    value: 0
+  },
+  iResolution: {
+    value: new THREE.Vector3()
+  },
+};
+const circleMaterial = new THREE.ShaderMaterial({
+  fragmentShader,
+  uniforms,
+});
 
-const circleGeometry = new THREE.CircleGeometry( 3, 32 );
-const circle = new THREE.Mesh( circleGeometry, circleMaterial );
-circle.position.set(2,0,-15.5)
-scene.add( circle )
+const circleGeometry = new THREE.CircleGeometry(3, 32);
+const circle = new THREE.Mesh(circleGeometry, circleMaterial);
+circle.position.set(2, 0, -15.5)
+scene.add(circle)
 
 
 // Lighting
@@ -375,14 +423,13 @@ scene.add(pointLight)
 
 // ANCHOR Render function
 function render() {
-  renderer.render(scene, camera);
-  // effectComposer.render();
+  // renderer.render(scene, camera);
+  effectComposer.render();
 }
 
-renderer.setAnimationLoop( () => {
+renderer.setAnimationLoop(() => {
   const elapsedTime = clock.getElapsedTime()
   videoCubesGroup.rotation.y = elapsedTime * -0.01
-
   uniforms.iResolution.value.set(canvas.width, canvas.height, 1);
   uniforms.iTime.value = elapsedTime;
 
@@ -396,7 +443,7 @@ renderer.setAnimationLoop( () => {
 
   // head.rotation.set(elapsedTime * -0.01,0,5)
 
-  renderer.render(scene,camera)
+  effectComposer.render();
 })
 
 //ANCHOR Animation function
@@ -482,14 +529,13 @@ const lastfmData = fetch('https://ws.audioscrobbler.com/2.0/?method=user.getRece
     document.getElementById("artist").textContent = formattedArtistname
   });
 
-document.body.appendChild( VRButton.createButton( renderer ) );
+document.body.appendChild(VRButton.createButton(renderer));
 
 /* ---------------------------------- gsap ---------------------------------- */
 
 // Animates social links to the top after 500ms
-
 setTimeout(() => {
-  for (let i = 1; i <= 8; i++) {
+  for (let i = 1; i <= 9; i++) {
     let link = '.link-' + i
     let linkDom = document.querySelector(`.link-${i}`)
     let speed = 100
@@ -508,28 +554,27 @@ setTimeout(() => {
 }, 1000)
 
 
-let linkName = document.querySelector('#linkName')
+// let linkName = document.querySelector('#linkName')
 
-const linkOne = document.querySelector('.link-4')
-linkOne.addEventListener('mouseover', () => {
-  linkName.textContent = 'Twitter'
-})
+// const linkOne = document.querySelector('.link-4')
+// linkOne.addEventListener('mouseover', () => {
+//   linkName.textContent = 'Twitter'
+// })
 
-const linkTwo = document.querySelector('.link-5')
-linkTwo.addEventListener('mouseover', () => {
-  linkName.textContent = 'LinkedIn'
+// const linkTwo = document.querySelector('.link-5')
+// linkTwo.addEventListener('mouseover', () => {
+//   linkName.textContent = 'LinkedIn'
+// })
+// const linkThree = document.querySelector('.link-6')
+// linkThree.addEventListener('mouseover', () => {
+//   linkName.textContent = 'Blog (en español)'
 
+// })
+// const linkFour = document.querySelector('.link-7')
+// linkFour.addEventListener('mouseover', () => {
+//   linkName.textContent = 'More links...'
+// })
 
-})
-const linkThree = document.querySelector('.link-6')
-linkThree.addEventListener('mouseover', () => {
-  linkName.textContent = 'Blog (en español)'
-
-})
-const linkFour = document.querySelector('.link-7')
-linkFour.addEventListener('mouseover', () => {
-  linkName.textContent = 'More links...'
-})
 
 let isFar = false
 
@@ -544,12 +589,12 @@ gsap.registerPlugin(CSSPlugin)
 about.addEventListener('click', () => {
   aboutClicked = !aboutClicked
 
-  if(isFar){
+  if (isFar) {
     gsap.to(projectsText, {
       duration: 0.5,
       left: '-50vw',
       ease: 'sine.inOut',
-      opacity:  0
+      opacity: 0
     })
     gsap.to(camera.position, {
       duration: 0.8,
@@ -575,8 +620,8 @@ about.addEventListener('click', () => {
     ease: 'sine.inOut',
     opacity: aboutClicked ? 1 : 0
   })
-  if(aboutClicked){
-  isFar = true
+  if (aboutClicked) {
+    isFar = true
   }
 
 })
@@ -591,7 +636,7 @@ gsap.registerPlugin(CSSPlugin)
 
 projectsLink.addEventListener('click', () => {
   projectsClicked = !projectsClicked
-  if(isFar){
+  if (isFar) {
     gsap.to(aboutText, {
       duration: 0.5,
       left: '-50vw',
@@ -600,7 +645,7 @@ projectsLink.addEventListener('click', () => {
     })
     gsap.to(camera.position, {
       duration: 0.8,
-      z:  -11,
+      z: -11,
       ease: 'sine.inOut'
     })
     gsap.to(projectsText, {
@@ -612,16 +657,17 @@ projectsLink.addEventListener('click', () => {
     isFar = false
 
 
-  }else {
-  gsap.to(camera.position, {
-    duration: 0.8,
-    z: projectsClicked ? -11 : 6,
-    ease: 'sine.inOut'
-  })
-  gsap.to(projectsText, {
-    duration: 0.5,
-    left: projectsClicked ? '5vw' : '-50vw',
-    ease: 'sine.inOut',
-    opacity: projectsClicked ? 1 : 0
-  })}
+  } else {
+    gsap.to(camera.position, {
+      duration: 0.8,
+      z: projectsClicked ? -11 : 6,
+      ease: 'sine.inOut'
+    })
+    gsap.to(projectsText, {
+      duration: 0.5,
+      left: projectsClicked ? '5vw' : '-50vw',
+      ease: 'sine.inOut',
+      opacity: projectsClicked ? 1 : 0
+    })
+  }
 })
