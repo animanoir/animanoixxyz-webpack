@@ -19,15 +19,15 @@ import {
 import {
   TextGeometry
 } from 'three/examples/jsm/geometries/TextGeometry.js'
-import {
-  EffectComposer
-} from 'three/examples/jsm/postprocessing/EffectComposer.js'
-import {
-  RenderPass
-} from 'three/examples/jsm/postprocessing/RenderPass.js'
-import {
-  GlitchPass
-} from 'three/examples/jsm/postprocessing/GlitchPass.js'
+// import {
+//   EffectComposer
+// } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+// import {
+//   RenderPass
+// } from 'three/examples/jsm/postprocessing/RenderPass.js'
+// import {
+//   GlitchPass
+// } from 'three/examples/jsm/postprocessing/GlitchPass.js'
 import {
   GLTFLoader
 } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -133,15 +133,15 @@ const loadingManager = new THREE.LoadingManager(
 )
 
 //ANCHOR Post-processing
-const effectComposer = new EffectComposer(renderer)
-effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-effectComposer.setSize(windowSize.width, windowSize.height)
+// const effectComposer = new EffectComposer(renderer)
+// effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+// effectComposer.setSize(windowSize.width, windowSize.height)
 
-const renderPass = new RenderPass(scene, camera)
-effectComposer.addPass(renderPass)
+// const renderPass = new RenderPass(scene, camera)
+// effectComposer.addPass(renderPass)
 
-const glitchPass = new GlitchPass();
-effectComposer.addPass(glitchPass)
+// const glitchPass = new GlitchPass();
+// effectComposer.addPass(glitchPass)
 
 //ANCHOR Fonts
 const fontLoader = new FontLoader(loadingManager)
@@ -314,10 +314,10 @@ function createMaterialArray(filename) {
 
 scene.add(skybox);
 
-//ANCHOR Video cubes
-const videoCubesGroup = new THREE.Group()
-const cubesQuantity = 500
-const geometry = new THREE.CircleGeometry(5,6);
+//ANCHOR Video shapes
+const videoShapesGroup = new THREE.Group()
+const cubesQuantity = 550
+const geometry = new THREE.CircleGeometry(5, 6);
 for (let i = 0; i < cubesQuantity; i++) {
   let zPosition = (-1 * (Math.random() - 0.5) * 100) - 10
   let wireframeEnabled = false
@@ -330,20 +330,20 @@ for (let i = 0; i < cubesQuantity; i++) {
     map: textures[randomIndex],
     wireframe: wireframeEnabled
   });
-  var cube = new THREE.Mesh(geometry, material);
-  cube.position.x = ((Math.random() - 0.5) * 111) + 10
-  cube.position.y = ((Math.random() - 0.5) * 111) + 10
-  cube.position.z = zPosition
-  cube.rotation.x = Math.random() * Math.PI
-  cube.rotation.y = Math.random() * Math.PI
+  var shape = new THREE.Mesh(geometry, material);
+  shape.position.x = ((Math.random() - 0.5) * 111) + 10
+  shape.position.y = ((Math.random() - 0.5) * 111) + 10
+  shape.position.z = zPosition
+  shape.rotation.x = Math.random() * Math.PI
+  shape.rotation.y = Math.random() * Math.PI
   // const scale = Math.random() * 1.5
   // cube.scale.set(scale, scale, scale)
   // scene.add(cube);
 
-  videoCubesGroup.add(cube)
+  videoShapesGroup.add(shape)
 }
 
-scene.add(videoCubesGroup)
+scene.add(videoShapesGroup)
 
 // Circle behind Animanoir logo
 const fragmentShader = `
@@ -423,13 +423,13 @@ scene.add(pointLight)
 
 // ANCHOR Render function
 function render() {
-  // renderer.render(scene, camera);
-  effectComposer.render();
+  renderer.render(scene, camera);
+  // effectComposer.render();
 }
 
 renderer.setAnimationLoop(() => {
   const elapsedTime = clock.getElapsedTime()
-  videoCubesGroup.rotation.y = elapsedTime * -0.01
+  videoShapesGroup.rotation.y = elapsedTime * -0.01
   uniforms.iResolution.value.set(canvas.width, canvas.height, 1);
   uniforms.iTime.value = elapsedTime;
 
@@ -442,15 +442,16 @@ renderer.setAnimationLoop(() => {
   // camera.lookAt(mainText.position)
 
   // head.rotation.set(elapsedTime * -0.01,0,5)
+  renderer.render(scene, camera);
 
-  effectComposer.render();
+  // effectComposer.render();
 })
 
 //ANCHOR Animation function
 // const animate = function () {
 //   requestAnimationFrame(animate);
 //   const elapsedTime = clock.getElapsedTime()
-//   videoCubesGroup.rotation.y = elapsedTime * -0.01
+//   videoShapesGroup.rotation.y = elapsedTime * -0.01
 
 //   uniforms.iResolution.value.set(canvas.width, canvas.height, 1);
 //   uniforms.iTime.value = elapsedTime;
