@@ -29,6 +29,12 @@ import {
   GlitchPass
 } from 'three/examples/jsm/postprocessing/GlitchPass.js'
 import {
+  CopyShader
+} from 'three/examples/jsm/shaders/CopyShader.js';
+import {
+  ShaderPass
+} from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import {
   GLTFLoader
 } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
@@ -90,6 +96,11 @@ const windowSize = {
 
 const scene = new THREE.Scene();
 
+//ANCHOR Camera
+const camera = new THREE.PerspectiveCamera(75, windowSize.width / windowSize.height, 0.1, 1000);
+camera.position.z = 6;
+const d = new Date();
+
 
 //ANCHOR Renderer
 const renderer = new THREE.WebGLRenderer({
@@ -104,11 +115,30 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true
 renderer.xr.enabled = true;
 
-//ANCHOR Camera
-const camera = new THREE.PerspectiveCamera(75, windowSize.width / windowSize.height, 0.1, 1000);
-camera.position.z = 6;
-const d = new Date();
+//ANCHOR Post-processing
+const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+const renderTarget = new THREE.WebGLRenderTarget(size.width, size.height, {
+  samples: 4,
+});
 
+const renderPass = new RenderPass(scene, camera);
+const glitchPass = new GlitchPass();
+const copyPass = new ShaderPass(CopyShader);
+
+const effectComposer1 = new EffectComposer(renderer)
+effectComposer1.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+effectComposer1.setSize(windowSize.width, windowSize.height)
+
+effectComposer1.addPass(copyPass)
+effectComposer1.addPass(glitchPass)
+effectComposer1.addPass(renderPass)
+
+// const effectComposer2 = new EffectComposer(renderer, renderTarget);
+// effectComposer2.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+// effectComposer2.setSize(windowSize.width, windowSize.height)
+// effectComposer2.addPass(glitchPass)
+// effectComposer2.addPass(renderPass);
+// effectComposer2.addPass(copyPass);
 
 //ANCHOR Loading Manager
 const loadingManager = new THREE.LoadingManager(
@@ -131,17 +161,6 @@ const loadingManager = new THREE.LoadingManager(
     console.log('LOADING MANAGER: assets loading...')
   }
 )
-
-//ANCHOR Post-processing
-const effectComposer = new EffectComposer(renderer)
-effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-effectComposer.setSize(windowSize.width, windowSize.height)
-
-const renderPass = new RenderPass(scene, camera)
-effectComposer.addPass(renderPass)
-
-const glitchPass = new GlitchPass();
-effectComposer.addPass(glitchPass)
 
 //ANCHOR Fonts
 const fontLoader = new FontLoader(loadingManager)
@@ -317,7 +336,7 @@ scene.add(skybox);
 //ANCHOR Video cubes
 const videoCubesGroup = new THREE.Group()
 const cubesQuantity = 500
-const geometry = new THREE.CircleGeometry(5,6);
+const geometry = new THREE.CircleGeometry(5, 6);
 for (let i = 0; i < cubesQuantity; i++) {
   let zPosition = (-1 * (Math.random() - 0.5) * 100) - 10
   let wireframeEnabled = false
@@ -424,7 +443,7 @@ scene.add(pointLight)
 // ANCHOR Render function
 function render() {
   // renderer.render(scene, camera);
-  effectComposer.render();
+  effectComposer1.render();
 }
 
 renderer.setAnimationLoop(() => {
@@ -443,7 +462,8 @@ renderer.setAnimationLoop(() => {
 
   // head.rotation.set(elapsedTime * -0.01,0,5)
 
-  effectComposer.render();
+  effectComposer1.render();
+  // effectComposer2.render();
 })
 
 //ANCHOR Animation function
@@ -484,6 +504,8 @@ window.addEventListener('resize', () => {
 
   // Update renderer
   renderer.setSize(windowSize.width, windowSize.height)
+  composer1.setSize(container.offsetWidth, container.offsetHeight);
+  composer2.setSize(container.offsetWidth, container.offsetHeight);
 })
 
 // Detects mouse coordinates
