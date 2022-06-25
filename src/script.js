@@ -534,9 +534,9 @@ document.body.appendChild(VRButton.createButton(renderer));
 
 /* ---------------------------------- gsap ---------------------------------- */
 
-// Animates social links to the top after 500ms
+//ANCHOR Animates social links to the top after 500ms
 setTimeout(() => {
-  for (let i = 1; i <= 9; i++) {
+  for (let i = 1; i <= 8; i++) {
     let link = '.link-' + i
     let linkDom = document.querySelector(`.link-${i}`)
     let speed = 100
